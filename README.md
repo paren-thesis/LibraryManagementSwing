@@ -1,4 +1,4 @@
-##This Project was developed using NetBeans and MySQL.
+## This Project was developed using NetBeans and MySQL.
 
 First you need to clone the prject.
 
