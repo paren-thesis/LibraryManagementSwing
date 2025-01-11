@@ -177,9 +177,7 @@ public class LibraryManagementSwing {
         return panel;
     }
 
-
-
     public static void main(String[] args) {
-        
+        SwingUtilities.invokeLater(LibraryManagementSwing::new);
     }
 }
