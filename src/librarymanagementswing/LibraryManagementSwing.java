@@ -86,7 +86,61 @@ public class LibraryManagementSwing {
         return panel;
     }
 
-    
+    private JPanel createIssueBookPanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(4, 2, 10, 10));
+
+        JLabel bookIdLabel = new JLabel("Book ID:");
+        JTextField bookIdField = new JTextField();
+        JLabel studentLabel = new JLabel("Student Name:");
+        JTextField studentField = new JTextField();
+        JButton issueButton = new JButton("Issue Book");
+
+        panel.add(bookIdLabel);
+        panel.add(bookIdField);
+        panel.add(studentLabel);
+        panel.add(studentField);
+        panel.add(new JLabel()); // Spacer
+        panel.add(issueButton);
+
+        issueButton.addActionListener(e -> {
+            String bookId = bookIdField.getText();
+            String studentName = studentField.getText();
+            if (!bookId.isEmpty() && !studentName.isEmpty()) {
+                try {
+                    String checkQuery = "SELECT * FROM books WHERE book_id = ? AND available = TRUE";
+                    PreparedStatement checkStmt = connection.prepareStatement(checkQuery);
+                    checkStmt.setInt(1, Integer.parseInt(bookId));
+                    ResultSet rs = checkStmt.executeQuery();
+
+                    if (rs.next()) {
+                        String issueQuery = "INSERT INTO issued_books (book_id, student_name, issue_date) VALUES (?, ?, CURDATE())";
+                        PreparedStatement issueStmt = connection.prepareStatement(issueQuery);
+                        issueStmt.setInt(1, Integer.parseInt(bookId));
+                        issueStmt.setString(2, studentName);
+                        issueStmt.executeUpdate();
+
+                        String updateQuery = "UPDATE books SET available = FALSE WHERE book_id = ?";
+                        PreparedStatement updateStmt = connection.prepareStatement(updateQuery);
+                        updateStmt.setInt(1, Integer.parseInt(bookId));
+                        updateStmt.executeUpdate();
+
+                        JOptionPane.showMessageDialog(null, "Book issued successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        bookIdField.setText("");
+                        studentField.setText("");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Book not available or doesn't exist!", "Warning", JOptionPane.WARNING_MESSAGE);
+                    }
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Please fill in all fields!", "Warning", JOptionPane.WARNING_MESSAGE);
+            }
+        });
+
+        return panel;
+    }
 
 
     public static void main(String[] args) {
