@@ -36,4 +36,5 @@ CREATE TABLE issued_books (
 
 ```
 
-Then run the LibraryManagementSwing.java
+Then run the LibraryManagementSwing.java in NetBeans
+
