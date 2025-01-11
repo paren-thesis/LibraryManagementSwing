@@ -17,6 +17,16 @@ public class LibraryManagementSwing {
     private static final String DB_PASSWORD = ""; // Replace with your MySQL password
     private Connection connection;
 
+    public LibraryManagementSwing() {
+        try {
+            connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Database connection failed: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+        }
+        initComponents();
+    }
+
     public static void main(String[] args) {
         
     }
