@@ -142,6 +142,42 @@ public class LibraryManagementSwing {
         return panel;
     }
 
+    private JPanel createViewBooksPanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BorderLayout());
+
+        JButton refreshButton = new JButton("Refresh");
+        JTable table = new JTable(new DefaultTableModel(new Object[]{"Book ID", "Title", "Author", "Available"}, 0));
+        JScrollPane scrollPane = new JScrollPane(table);
+
+        refreshButton.addActionListener(e -> {
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
+            model.setRowCount(0); // Clear the table
+            try {
+                String query = "SELECT * FROM books";
+                Statement stmt = connection.createStatement();
+                ResultSet rs = stmt.executeQuery(query);
+
+                while (rs.next()) {
+                    model.addRow(new Object[]{
+                            rs.getInt("book_id"),
+                            rs.getString("title"),
+                            rs.getString("author"),
+                            rs.getBoolean("available") ? "Yes" : "No"
+                    });
+                }
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        panel.add(refreshButton, BorderLayout.NORTH);
+        panel.add(scrollPane, BorderLayout.CENTER);
+
+        return panel;
+    }
+
+
 
     public static void main(String[] args) {
         
