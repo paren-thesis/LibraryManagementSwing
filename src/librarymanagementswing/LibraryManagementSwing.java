@@ -27,6 +27,24 @@ public class LibraryManagementSwing {
         initComponents();
     }
 
+    private void initComponents() {
+        JFrame frame = new JFrame("Library Management System");
+        frame.setSize(800, 600);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // Create tabs
+        JTabbedPane tabbedPane = new JTabbedPane();
+
+        // Add tabs
+        tabbedPane.add("Add Book", createAddBookPanel());
+        tabbedPane.add("Issue Book", createIssueBookPanel());
+        tabbedPane.add("Return Book", createReturnBookPanel());
+        tabbedPane.add("View Books", createViewBooksPanel());
+
+        frame.add(tabbedPane);
+        frame.setVisible(true);
+    }
+
     public static void main(String[] args) {
         
     }
