@@ -45,6 +45,50 @@ public class LibraryManagementSwing {
         frame.setVisible(true);
     }
 
+    private JPanel createAddBookPanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(4, 2, 10, 10));
+
+        JLabel titleLabel = new JLabel("Book Title:");
+        JTextField titleField = new JTextField();
+        JLabel authorLabel = new JLabel("Author:");
+        JTextField authorField = new JTextField();
+        JButton addButton = new JButton("Add Book");
+
+        panel.add(titleLabel);
+        panel.add(titleField);
+        panel.add(authorLabel);
+        panel.add(authorField);
+        panel.add(new JLabel()); // Spacer
+        panel.add(addButton);
+
+        addButton.addActionListener(e -> {
+            String title = titleField.getText();
+            String author = authorField.getText();
+            if (!title.isEmpty() && !author.isEmpty()) {
+                try {
+                    String query = "INSERT INTO books (title, author) VALUES (?, ?)";
+                    PreparedStatement stmt = connection.prepareStatement(query);
+                    stmt.setString(1, title);
+                    stmt.setString(2, author);
+                    stmt.executeUpdate();
+                    JOptionPane.showMessageDialog(null, "Book added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    titleField.setText("");
+                    authorField.setText("");
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Please fill in all fields!", "Warning", JOptionPane.WARNING_MESSAGE);
+            }
+        });
+
+        return panel;
+    }
+
+    
+
+
     public static void main(String[] args) {
         
     }
