@@ -142,6 +142,55 @@ public class LibraryManagementSwing {
         return panel;
     }
 
+    private JPanel createReturnBookPanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(3, 2, 10, 10));
+
+        JLabel bookIdLabel = new JLabel("Book ID:");
+        JTextField bookIdField = new JTextField();
+        JButton returnButton = new JButton("Return Book");
+
+        panel.add(bookIdLabel);
+        panel.add(bookIdField);
+        panel.add(new JLabel()); // Spacer
+        panel.add(returnButton);
+
+        returnButton.addActionListener(e -> {
+            String bookId = bookIdField.getText();
+            if (!bookId.isEmpty()) {
+                try {
+                    String checkQuery = "SELECT * FROM issued_books WHERE book_id = ?";
+                    PreparedStatement checkStmt = connection.prepareStatement(checkQuery);
+                    checkStmt.setInt(1, Integer.parseInt(bookId));
+                    ResultSet rs = checkStmt.executeQuery();
+
+                    if (rs.next()) {
+                        String deleteQuery = "DELETE FROM issued_books WHERE book_id = ?";
+                        PreparedStatement deleteStmt = connection.prepareStatement(deleteQuery);
+                        deleteStmt.setInt(1, Integer.parseInt(bookId));
+                        deleteStmt.executeUpdate();
+
+                        String updateQuery = "UPDATE books SET available = TRUE WHERE book_id = ?";
+                        PreparedStatement updateStmt = connection.prepareStatement(updateQuery);
+                        updateStmt.setInt(1, Integer.parseInt(bookId));
+                        updateStmt.executeUpdate();
+
+                        JOptionPane.showMessageDialog(null, "Book returned successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        bookIdField.setText("");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "No record found for the issued book ID.", "Warning", JOptionPane.WARNING_MESSAGE);
+                    }
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Please enter the book ID!", "Warning", JOptionPane.WARNING_MESSAGE);
+            }
+        });
+
+        return panel;
+    }
+
     private JPanel createViewBooksPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
